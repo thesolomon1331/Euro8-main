@@ -1,0 +1,213 @@
+{% extends 'admin/dashboard.html' %}
+{% load static %}
+
+{% block active %}{%endblock%}
+{% block school %}active{%endblock%}
+
+
+{% block content %}
+
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th, td {
+        border: 1px solid black;
+        text-align: left;
+        padding: 20px;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    .mon, .tue, .wed, .thu, .fri, .sat, .sun {
+        width: 14%;
+        vertical-align: top;
+    }
+    .noday {
+        background-color: #eee;
+    }
+</style>
+
+<div class="container shadow p-3">
+    <div class="h4 m-3">Daily Update</div>
+    <div class="container shadow p-3 my-3 border border-primary">
+        <h4>Contract Information</h4>
+        <hr>
+        <p><b>Contract Name: </b> {{data.contract_school_name}}</p>
+        <p><b>Contract Number: </b> {{data.contract_number}}</p>
+        <p><b>Start Date: </b> {{data.start_date}}</p>
+        <p><b>End Date: </b> {{data.end_date}}</p>
+    </div>
+  
+    
+    <div class="container shadow p-3 my-3 border border-primary">
+        <h4>Schedules</h4>
+        <hr>
+        <h4>Available Schedules</h4>
+        <table class="my-4">
+            <tr>
+                <th>Name</th>
+                <th>Pick Up</th>
+                <th>Drop</th>
+                <th>Vias</th>
+                <th>Price</th>
+                <th>Created</th>
+                <th>Edit</th>
+                <th>Open</th>
+            </tr>
+            {% for i in schedule %}
+            <tr>
+                <td>{{i.name}}</td>
+            
+                <td>{{i.pickup_location}}</td>
+                <td>{{i.drop_location}}</td>
+                <td>{{i.vias}}</td>
+                <td>{{i.price}}</td>
+                <td>{{i.timestamp}}</td>
+                <td><a href="{% url 'scheduleedit' i.id %}"><button class="btn btn-primary">Edit</button></a></td>
+                <td><a href="{% url 'addinschedule' i.id%}"><button class="btn btn-dark">Open</button></a></td>
+            </tr>
+            {% endfor %}
+        </table>
+        <a href="{% url 'scheduleadd' data.id%}"><button class="btn btn-primary">Add Schedule</button></a><br><br>
+    </div>
+    
+    <div class="container shadow p-3  border border-primary">
+        <h4>Calender Updates</h4>
+        <hr>
+        <form class="row g-3 mx-1" method="POST">
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <th>Schedule</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="col-auto">
+                            <label for="" class="visually-hidden">Schedule</label>
+                            <select name="schedule" id="" class="form-control">
+                                {% for i in schedule %}
+                                <option value="{{i.id}}">{{i.name}}</option>
+                                {% endfor %}
+
+                                {% for i in inschedule %}
+                                <option value="{{i.id}}">{{i.school.name}}----({{i.name}})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                         <div class="col-auto">
+                        <label for="staticEmail2" class="visually-hidden">Date</label>
+                        <input type="date" name="date" class="form-control-plaintext" id="staticEmail2" value="{{today}}" >
+                      </div>
+                    </td>
+                    <td>
+                        <div class="col-auto">
+                            <label for="inputPassword2" class="visually-hidden">Password</label>
+                            <select name="status" id="" class="form-control">
+                              <option value="Completed">Completed</option>
+                              <option value="No Fare">No Fare</option>
+                              <option value="No School">No School</option>
+                            </select>
+                          </div>
+                    </td>
+                    <td>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-primary mb-3">Update</button>
+                          </div>
+                    </td>
+                </tr>
+            </table>        
+        </form>
+    </div>
+    
+
+    <div class="container shadow p-3 my-3 border border-primary">
+        <h4>Report Generation</h4>
+        <hr>
+        <p><b>Select Year and Month To Generate The Report</b></p>
+        <form action="{% url 'contractreport' data.id %}" method="POST">
+            {% csrf_token %}
+            <label for="year">Year</label>
+            <select name="year" id="" class="form-control">
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+            </select>
+            <br><br>
+
+            <label for="month">Month</label>
+            <select name="month" id="" class="form-control">
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+            <button class="btn btn-dark my-3">Generate Report</button></a>
+        </form>
+    </div>
+
+
+    <div class="container shadow p-3 my-3 border border-primary">
+        <h4>Calender</h4>
+        <hr>
+        <div class="container my-4 shadow-lg p-3" id="calendar">
+            <div class="col-auto mb-4 mt-2">
+                <form action="" method="GET">
+                    <label for="" class="">Select The Schedule</label>
+                    <select name="schedule" id="" class="form-control">
+                        {% for i in schedule %}
+                        <option value="{{i.id}}">{{i.name}}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn btn-primary my-2">Get Data</button>
+                </form>
+               <hr>
+            </div>
+        
+        <h1>Calendar for {{ year }}-{{ month }}</h1>
+        <div>{{ calendar|safe }}</div>
+        </div>
+    </div>
+
+
+    
+    <a href="{% url 'editschoolcontract' data.id%}"><button class="btn btn-dark my-3">Update Contract</button></a>
+</div>
+
+<!-- <script>
+    window.onload = function() {
+      const tableContainer = document.getElementById("calendar"); // Get the table container
+      const table = tableContainer.getElementsByTagName("table")[0]; // Get the table element
+    
+      // Loop through all table rows (<tr>)
+      for (let i = 0; i < table.rows.length; i++) {
+        const row = table.rows[i];
+    
+        // Loop through all cells (<td>) in the current row
+        for (let j = 0; j < row.cells.length; j++) {
+          const cell = row.cells[j];
+    
+          // Check if cell content contains "nofare" (ignoring case)
+          if (cell.textContent.toLowerCase().includes("NoFare")) {
+            cell.style.backgroundColor = "red"; // Set background color to red
+          }
+        }
+      }
+    };
+</script> -->
+ 
+{% endblock %}

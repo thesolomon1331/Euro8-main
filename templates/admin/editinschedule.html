@@ -1,0 +1,33 @@
+{% extends 'admin/dashboard.html' %}
+{% load static %}
+
+{% block active %}{%endblock%}
+{% block school %}active{%endblock%}
+
+
+{% block content %}
+
+    <form action="" method="POST" class="mx-0 border border-primary p-3 shadow">
+        <h4 class="my-3">Edit The InSchedule</h4>
+        {% csrf_token %}
+        {{form.as_p}}
+        <button class="btn btn-primary">Update</button>
+    </form>
+
+    <script>
+      
+        document.getElementById('id_name').className = 'form-control'
+        document.getElementById('id_pickup_location').className = 'form-control'
+        document.getElementById('id_drop_location').className = 'form-control'
+        document.getElementById('id_price').className = 'form-control'
+        document.getElementById('id_pick_time').className = 'form-control'
+        document.getElementById('id_pick_time').type = 'time'
+        document.getElementById('id_drop_time').className = 'form-control'
+        // document.getElementById('id_price').className = 'form-control'
+        document.getElementById('id_drop_time').type = 'time'
+        document.getElementById('id_vias').className = 'form-control'
+        // document.getElementById('id_pick_up_location').className = 'form-control'
+        // document.getElementById('id_drop_location').className = 'form-control'
+    </script>
+{% endblock %}
+
